@@ -19,7 +19,7 @@ const defaultScope = {
   useReducer,
 }
 
-const context = React.createContext({
+const codeContext = React.createContext({
   code: '',
   scope: defaultScope,
   transformCode(code) {
@@ -59,16 +59,14 @@ export function Provider({ code, transformCode, scope, children }) {
     error: null,
   })
 
-  const ctx = useMemo(
-    () => ({
-      code,
-      scope: { ...defaultScope, ...scope },
-      dispatch,
-      transformCode,
-    }),
-    [scope, code],
-  )
-  return <context.Provider value={ctx}>{children}</context.Provider>
+  const ctx = {
+    ...state,
+    code,
+    scope: { ...defaultScope, ...scope },
+    dispatch,
+    transformCode,
+  }
+  return <codeContext.Provider value={ctx}>{children}</codeContext.Provider>
 }
 
 Provider.defaultProps = {
@@ -79,8 +77,11 @@ Provider.defaultProps = {
 }
 
 export function Preview(props) {
-  const { code, scope, transformCode, dispatch } = useContext(context)
+  const { code, scope, transformCode, dispatch, error } = useContext(codeContext)
   useEffect(() => {
+    if (error) {
+      return
+    }
     let transformed = transformCode(code)
     const func = new Function(...Object.keys(scope), transformed)
     try {
@@ -88,46 +89,38 @@ export function Preview(props) {
     } catch (error) {
       dispatch({ type: TYPES.ERROR, payload: error })
     }
-  }, [code, scope, transformCode])
+  }, [code, scope, transformCode, error])
   return <div {...props} data-react-preview-editor="preview" />
 }
 
-function createHighlighter(props) {
-  return function highlight(code) {
-    return (
-      <Highlight
-        {...props.getHighlighterProps({
-          defaultProps,
-          code,
-          language: 'jsx',
-        })}
-      >
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <React.Fragment>
-            {tokens.map((line, i) => (
-              <div {...getLineProps({ line, key: i })}>
-                {line.map((token, key) => (
-                  <span {...getTokenProps({ token, key })} />
-                ))}
-              </div>
-            ))}
-          </React.Fragment>
-        )}
-      </Highlight>
-    )
-  }
-}
-
 export function Editor(props) {
-  const { code, dispatch } = useContext(context)
-
-  const highlighter = createHighlighter(props)
+  const { code, dispatch } = useContext(codeContext)
 
   return (
-    <Editor
+    <CodeEditor
       value={code}
       onValueChange={code => dispatch({ type: TYPES.EDIT, payload: code })}
-      highlight={highlighter}
+      highlight={code => (
+        <Highlight
+          {...props.getHighlighterProps({
+            defaultProps,
+            code,
+            language: 'jsx',
+          })}
+        >
+          {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            <React.Fragment>
+              {tokens.map((line, i) => (
+                <div {...getLineProps({ line, key: i })}>
+                  {line.map((token, key) => (
+                    <span {...getTokenProps({ token, key })} />
+                  ))}
+                </div>
+              ))}
+            </React.Fragment>
+          )}
+        </Highlight>
+      )}
       {...props}
     />
   )
