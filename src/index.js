@@ -3,10 +3,6 @@ import ReactDOM from 'react-dom'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import CodeEditor from 'react-simple-code-editor'
 
-import babel from '@babel/standalone'
-
-const { transform } = babel
-
 function render(element) {
   ReactDOM.render(element, document.querySelector('[data-react-preview-editor="preview"]'))
 }
@@ -27,8 +23,9 @@ const context = React.createContext({
   code: '',
   scope: defaultScope,
   transformCode(code) {
-    return defualtTransformer(code)
+    return code
   },
+  dispatch() {},
 })
 
 const TYPES = {
@@ -56,13 +53,32 @@ function reducer(state = initialState, { type, payload }) {
   }
 }
 
-function defualtTransformer(code) {
-  return transform(code, {
-    presets: [['stage-0', { decoratorsLegacy: true }], 'react'],
-  }).code
+export function Provider({ code, transformCode, scope, children }) {
+  const [state, dispatch] = useReducer(reducer, {
+    initialCode: code,
+    error: null,
+  })
+
+  const ctx = useMemo(
+    () => ({
+      code,
+      scope: { ...defaultScope, ...scope },
+      dispatch,
+      transformCode,
+    }),
+    [scope, code],
+  )
+  return <context.Provider value={ctx}>{children}</context.Provider>
 }
 
-export function Preview() {
+Provider.defaultProps = {
+  transformCode(code) {
+    return code
+  },
+  scope: defaultScope,
+}
+
+export function Preview(props) {
   const { code, scope, transformCode, dispatch } = useContext(context)
   useEffect(() => {
     let transformed = transformCode(code)
@@ -72,32 +88,8 @@ export function Preview() {
     } catch (error) {
       dispatch({ type: TYPES.ERROR, payload: error })
     }
-  }, [code, scope, dispatch, transformCode])
-  return <div data-react-preview-editor="preview" />
-}
-
-export function Provider({ code, transformCode, scope, children }) {
-  const [state, dispatch] = useReducer(reducer, initialState)
-
-  const ctx = useMemo(
-    () => ({
-      code,
-      scope: { ...defaultScope, ...scope },
-      dispatch,
-      transformCode(code) {
-        return transformCode(code, { defualtTransformer })
-      },
-    }),
-    [state, scope, dispatch, code],
-  )
-  return <context.Provider value={ctx}>{children}</context.Provider>
-}
-
-Provider.defaultProps = {
-  transformCode(code, { defualtTransformer }) {
-    return defualtTransformer(code)
-  },
-  scope: defaultScope,
+  }, [code, scope, transformCode])
+  return <div {...props} data-react-preview-editor="preview" />
 }
 
 function createHighlighter(props) {
