@@ -1,0 +1,28 @@
+{
+  "name": "@matthamlin/react-preview-editor",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "umd:main": "dist/index.umd.js",
+  "source": "src/index.js",
+  "author": "Matthew Hamlin <hamlim@outlook.com> (https://matthamlin.me/)",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "7.2.3",
+    "@babel/core": "7.2.2",
+    "@babel/preset-env": "7.3.1",
+    "@babel/preset-react": "7.0.0",
+    "prism-react-renderer": "0.1.5",
+    "react-simple-code-editor": "0.8.0",
+    "microbundle": "0.9.0"
+  },
+  "peerDependencies": {
+    "@babel/standalone": "7.3.1",
+    "react": "16.8.0-alpha.1",
+    "react-dom": "16.8.0-alpha.1"
+  },
+  "dependencies": {},
+  "scripts": {
+    "build": "babel src/ --out-dir dist/",
+    "bundle": "microbundle --jsx React.createElement --name react-preview-editor"
+  }
+}
