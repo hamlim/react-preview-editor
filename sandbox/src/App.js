@@ -2,10 +2,18 @@ import React, { Component } from 'react'
 import logo from './logo.svg'
 import './App.css'
 
-import { Provider, Editor, Preview } from '@matthamlin/react-preview-editor'
+import { Provider, Editor, Preview } from './test'
 
 const code = `
-let count = 0;
+console.log(React);
+function App() {
+  const [count, setCount] = useState(0);
+  return React.createElement('button', {
+    onClick: () => setCount(count + 1),
+    children: 'Update count ' + count 
+  })
+}
+render(React.createElement(App));
 `
 
 class App extends Component {
@@ -28,6 +36,7 @@ class App extends Component {
         </header>
 
         <Provider code={code}>
+          <Preview />
           <Editor />
         </Provider>
       </div>

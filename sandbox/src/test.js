@@ -52,11 +52,12 @@ function reducer(state = initialState, { type, payload }) {
         ...state,
         error: payload,
       }
-    case TYPES.EDIT:
+    case TYPES.EDIT: {
       return {
         ...state,
         code: payload,
       }
+    }
     default: {
       return state
     }
