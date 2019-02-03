@@ -103,7 +103,7 @@ export function Editor(props) {
       highlight={code => (
         <Highlight
           {...props.getHighlighterProps({
-            defaultProps,
+            ...defaultProps,
             code,
             language: 'jsx',
           })}
