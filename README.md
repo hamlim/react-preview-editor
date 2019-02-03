@@ -1,6 +1,9 @@
 # React Preview Editor
 
-A live editor with a preview for code!
+React-Preview-Editor is a BYO live editor and preview for code. It is built on top of:
+
+- `react-simple-code-editor` and
+- `prism-react-renderer`
 
 ## Getting Started
 
@@ -8,6 +11,11 @@ A live editor with a preview for code!
 
 ```jsx
 import { Provider, Editor, Preview } from '@matthamlin/react-preview-editor'
+import { transform } from '@babel/standalone'
+
+function transformCode(code) {
+  return transform(code, { presets: [['stage-0', { decoratorsLegacy: true }], 'react'] }).code
+}
 
 render(
   <Provider
@@ -19,15 +27,10 @@ render(
 }
 
 render(<App />);`}
+    transformCode={transformCode}
   >
     <Preview />
     <Editor />
   </Provider>,
 )
 ```
-
-## TODO:
-
-- [ ] See if it works
-- [ ] Error handling
-- [ ] Contribution guidelines
