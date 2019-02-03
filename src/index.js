@@ -87,15 +87,12 @@ Provider.defaultProps = {
 }
 
 export function Preview(props) {
-  const { code, scope, transformCode, dispatch, error } = useContext(codeContext)
+  const { code, scope, transformCode, dispatch } = useContext(codeContext)
   useEffect(() => {
-    if (error) {
-      return
-    }
     let transformed = transformCode(code)
     const func = new Function(...Object.keys(scope), transformed)
     func(...Object.values(scope))
-  }, [code, scope, transformCode, error])
+  }, [code, scope, transformCode])
   return <div {...props} data-react-preview-editor="preview" />
 }
 
