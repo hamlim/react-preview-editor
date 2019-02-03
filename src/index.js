@@ -55,13 +55,13 @@ function reducer(state = initialState, { type, payload }) {
 
 export function Provider({ code, transformCode, scope, children }) {
   const [state, dispatch] = useReducer(reducer, {
+    code,
     initialCode: code,
     error: null,
   })
 
   const ctx = {
     ...state,
-    code,
     scope: { ...defaultScope, ...scope },
     dispatch,
     transformCode,
