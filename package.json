@@ -11,17 +11,23 @@
     "@babel/core": "7.2.2",
     "@babel/preset-env": "7.3.1",
     "@babel/preset-react": "7.0.0",
+    "babel-jest": "24.1.0",
+    "jest": "24.1.0",
+    "jest-dom": "3.0.1",
+    "microbundle": "0.9.0",
     "prism-react-renderer": "0.1.5",
+    "react": "16.8.0",
+    "react-dom": "16.8.0",
     "react-simple-code-editor": "0.8.0",
-    "microbundle": "0.9.0"
+    "react-testing-library": "5.5.0"
   },
   "peerDependencies": {
-    "react": "16.8.0-alpha.1",
-    "react-dom": "16.8.0-alpha.1"
+    "react": "16.8.0",
+    "react-dom": "16.8.0"
   },
   "dependencies": {},
   "scripts": {
-    "build": "babel src/ --out-dir dist/",
-    "bundle": "microbundle --jsx React.createElement --name react-preview-editor"
+    "bundle": "microbundle --jsx React.createElement --name react-preview-editor",
+    "test": "jest"
   }
 }
