@@ -11,15 +11,17 @@ import ReactDOM from 'react-dom'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import CodeEditor from 'react-simple-code-editor'
 
-function render(element) {
-  ReactDOM.render(element, document.querySelector('[data-react-preview-editor="preview"]'))
+export function createRenderer(mountSelector = `[data-react-preview-editor="preview"]`) {
+  return function render(element) {
+    ReactDOM.render(element, document.querySelector(mountSelector))
+  }
 }
 
 const defaultScope = {
   React,
   Fragment: React.Fragment,
   Component: React.Component,
-  render,
+  render: createRenderer(),
   useEffect,
   useContext,
   useState,
@@ -86,47 +88,58 @@ Provider.defaultProps = {
   scope: defaultScope,
 }
 
-export function Preview(props) {
+export function usePreview({
+  render = createRenderer(`[data-react-preview-editor="preview"]`),
+  scope: hookScope,
+}) {
   const { code, scope, transformCode, dispatch } = useContext(codeContext)
+  const resolvedScope = { ...scope, ...hookScope, render }
   useEffect(() => {
     let transformed = transformCode(code)
-    const func = new Function(...Object.keys(scope), transformed)
-    func(...Object.values(scope))
+    const func = new Function(...Object.keys(resolvedScope), transformed)
+    func(...Object.values(resolvedScope))
   }, [code, scope, transformCode])
+}
+
+export function Preview(props) {
+  usePreview()
   return <div {...props} data-react-preview-editor="preview" />
 }
 
-export function Editor({ getHighlighterProps, ...props }) {
+export function useEditor({ getHighlighterProps }) {
   const { code, dispatch } = useContext(codeContext)
 
-  return (
-    <CodeEditor
-      value={code}
-      onValueChange={code => dispatch({ type: TYPES.EDIT, payload: code })}
-      highlight={code => (
-        <Highlight
-          {...getHighlighterProps({
-            ...defaultProps,
-            code,
-            language: 'jsx',
-          })}
-        >
-          {({ className, style, tokens, getLineProps, getTokenProps }) => (
-            <React.Fragment>
-              {tokens.map((line, i) => (
-                <div {...getLineProps({ line, key: i })}>
-                  {line.map((token, key) => (
-                    <span {...getTokenProps({ token, key })} />
-                  ))}
-                </div>
-              ))}
-            </React.Fragment>
-          )}
-        </Highlight>
-      )}
-      {...props}
-    />
-  )
+  return {
+    value: code,
+    onValueChange: code => dispatch({ type: TYPES.EDIT, payload: code }),
+    highlight: code => (
+      <Highlight
+        {...getHighlighterProps({
+          ...defaultProps,
+          code,
+          language: 'jsx',
+        })}
+      >
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <React.Fragment>
+            {tokens.map((line, i) => (
+              <div {...getLineProps({ line, key: i })}>
+                {line.map((token, key) => (
+                  <span {...getTokenProps({ token, key })} />
+                ))}
+              </div>
+            ))}
+          </React.Fragment>
+        )}
+      </Highlight>
+    ),
+  }
+}
+
+export function Editor({ getHighlighterProps, ...props }) {
+  const editorProps = useEditor({ getHighlighterProps })
+
+  return <CodeEditor {...editorProps} {...props} />
 }
 
 Editor.defaultProps = {
