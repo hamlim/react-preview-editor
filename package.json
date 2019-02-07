@@ -1,6 +1,6 @@
 {
   "name": "@matthamlin/react-preview-editor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "umd:main": "dist/index.umd.js",
   "source": "src/index.js",

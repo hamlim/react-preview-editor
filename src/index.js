@@ -91,7 +91,7 @@ Provider.defaultProps = {
 export function usePreview({
   render = createRenderer(`[data-react-preview-editor="preview"]`),
   scope: hookScope,
-}) {
+} = {}) {
   const { code, scope, transformCode, dispatch } = useContext(codeContext)
   const resolvedScope = { ...scope, ...hookScope, render }
   useEffect(() => {

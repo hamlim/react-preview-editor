@@ -10,6 +10,7 @@ test('it renders', () => {
     render(
       <Provider code={'const a = "a"'}>
         <Editor />
+        <Preview />
       </Provider>,
     ),
   ).not.toThrow()
