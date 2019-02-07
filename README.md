@@ -2,8 +2,9 @@
 
 React-Preview-Editor is a BYO live editor and preview for code. It is built on top of:
 
-- `react-simple-code-editor` and
-- `prism-react-renderer`
+- `react-simple-code-editor`,
+- `prism-react-renderer`, and
+- React Hooks
 
 ## Getting Started
 
@@ -11,9 +12,9 @@ Take a look at the CodeSandbox here: https://codesandbox.io/s/wk69q5zv9k. To set
 add the following:
 
 ```bash
-yarn add @matthamlin/react-preview-editor react@16.8.0-alpha.1 react-dom@16.8.0-alpha.1
+yarn add @matthamlin/react-preview-editor react@16.8.0 react-dom@16.8.0
 # or
-npm add @matthamlin/react-preview-editor react@16.8.0-alpha.1 react-dom@16.8.0-alpha.1
+npm add @matthamlin/react-preview-editor react@16.8.0 react-dom@16.8.0
 ```
 
 **Optionally** Install `@babel/standalone` to transform JSX and future JavaScript features so the
